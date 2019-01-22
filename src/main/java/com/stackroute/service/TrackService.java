@@ -6,9 +6,11 @@ import java.util.Optional;
 
 public interface TrackService {
 
-    public Track saveTrack(Track track);
-    public Optional<Track> displayTrackByTrackId(int id);
-    public Track updateCommentsOfTrack(Track track);
-    public void deleteTrack(int id);
-    public List<Track> getAllTracks();
+     Track saveTrack(Track track);
+     Optional<Track> displayTrackByTrackId(int id);
+     Track updateCommentsOfTrack(Track track);
+     void deleteTrack(int id);
+     List<Track> getAllTracks();
+     List<Track> findByName(String name);
+
 }

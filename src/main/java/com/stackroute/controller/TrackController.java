@@ -37,7 +37,11 @@ public class TrackController {
     public ResponseEntity<Optional<Track>> displayById(@PathVariable int id){
 
         return new ResponseEntity<Optional<Track>>(trackService.displayTrackByTrackId(id),HttpStatus.OK);
+    }
+    @GetMapping("tracks/{name}")
+    public ResponseEntity<List<Track>> findTrackByName(@PathVariable String name){
 
+        return new ResponseEntity<List<Track>>(trackService.findByName(name),HttpStatus.OK);
     }
     @DeleteMapping("track/{id}")
     public ResponseEntity<?> deleteById(@PathVariable int id){
