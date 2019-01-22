@@ -2,6 +2,8 @@ package com.stackroute.controller;
 
 import com.stackroute.domain.Track;
 import com.stackroute.service.TrackService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +13,16 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value="api/v1/")
+@RequestMapping(value="/track")
 public class TrackController {
     TrackService trackService;
-    //@Autowired
+
     public TrackController(TrackService trackService) {
         this.trackService = trackService;
     }
-    @PostMapping("track")
+    @ApiOperation(value = "Add Track", response = Iterable.class)
+
+    @PostMapping("/add")
         public ResponseEntity<?> saveTrack(@RequestBody Track track){
         ResponseEntity responseEntity;
         try{
@@ -29,29 +33,39 @@ public class TrackController {
         }
         return responseEntity;
     }
-    @GetMapping("track")
+    @ApiOperation(value = "Get All Tracks", response = Iterable.class)
+
+    @GetMapping("/getAll")
        public ResponseEntity<?> getAllTracks(){
         return new ResponseEntity<List<Track>>(trackService.getAllTracks(),HttpStatus.OK);
     }
-    @GetMapping("track/{id}")
+    @ApiOperation(value = "View Track By ID", response = Iterable.class)
+
+    @GetMapping("/show/{id}")
     public ResponseEntity<Optional<Track>> displayById(@PathVariable int id){
 
         return new ResponseEntity<Optional<Track>>(trackService.displayTrackByTrackId(id),HttpStatus.OK);
     }
-    @GetMapping("tracks/{name}")
+    @ApiOperation(value = "View Track By Name", response = Iterable.class)
+
+    @GetMapping("/show/{name}")
     public ResponseEntity<List<Track>> findTrackByName(@PathVariable String name){
 
         return new ResponseEntity<List<Track>>(trackService.findByName(name),HttpStatus.OK);
     }
-    @DeleteMapping("track/{id}")
+    @ApiOperation(value = "Delete Track", response = Iterable.class)
+
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable int id){
         ResponseEntity responseEntity;
         trackService.deleteTrack(id);
         responseEntity=new ResponseEntity<String>("Successfully deleted", HttpStatus.OK);
         return responseEntity;
     }
-    @PutMapping("track")
-    public ResponseEntity<?> UpdateTrack(@RequestBody Track track){
+    @ApiOperation(value = "Update Track", response = Iterable.class)
+
+    @PutMapping("/update")
+    public ResponseEntity<?> Updatetrack(@RequestBody Track track){
         ResponseEntity responseEntity;
         trackService.updateCommentsOfTrack(track);
         responseEntity=new ResponseEntity<String>("Successfully updated", HttpStatus.OK);
