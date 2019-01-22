@@ -1,6 +1,8 @@
 package com.stackroute.controller;
 
 import com.stackroute.domain.Track;
+import com.stackroute.exception.TrackAlreadyExistsException;
+import com.stackroute.exception.TrackNotFoundException;
 import com.stackroute.service.TrackService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +30,7 @@ public class TrackController {
         try{
             trackService.saveTrack(track);
             responseEntity=new ResponseEntity<String>("Successfully created", HttpStatus.CREATED);
-        }catch(Exception ex){
+        }catch(TrackAlreadyExistsException ex){
             responseEntity=new ResponseEntity<String>(ex.getMessage(),HttpStatus.CONFLICT);
         }
         return responseEntity;
@@ -43,15 +45,25 @@ public class TrackController {
 
     @GetMapping("/show/{id}")
     public ResponseEntity<Optional<Track>> displayById(@PathVariable int id){
-
-        return new ResponseEntity<Optional<Track>>(trackService.displayTrackByTrackId(id),HttpStatus.OK);
+        ResponseEntity responseEntity;
+        try{
+            responseEntity=new ResponseEntity<Optional<Track>>(trackService.displayTrackByTrackId(id),HttpStatus.OK);
+        }catch(TrackNotFoundException ex){
+            responseEntity=new ResponseEntity<String>(ex.getMessage(),HttpStatus.CONFLICT);
+        }
+        return responseEntity;
     }
     @ApiOperation(value = "View Track By Name", response = Iterable.class)
 
-    @GetMapping("/show/{name}")
+    @GetMapping("/shows/{name}")
     public ResponseEntity<List<Track>> findTrackByName(@PathVariable String name){
-
-        return new ResponseEntity<List<Track>>(trackService.findByName(name),HttpStatus.OK);
+        ResponseEntity responseEntity;
+        try{
+            responseEntity=new ResponseEntity<List<Track>>(trackService.findByName(name),HttpStatus.OK);
+        }catch(TrackNotFoundException ex){
+            responseEntity=new ResponseEntity<String>(ex.getMessage(),HttpStatus.CONFLICT);
+        }
+        return responseEntity;
     }
     @ApiOperation(value = "Delete Track", response = Iterable.class)
 
