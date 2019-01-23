@@ -61,14 +61,7 @@ public class TrackController {
         }
         return responseEntity;
     }
-    //view track by name
-    @ApiOperation(value = "View Track By Name", response = Iterable.class)
-    @GetMapping("/tracks/{name}")
-    public ResponseEntity<List<Track>> findTrackByName(@PathVariable String name) throws TrackNotFoundException{
-        ResponseEntity responseEntity;
-            responseEntity=new ResponseEntity<List<Track>>(trackService.findByName(name),HttpStatus.OK);
-        return responseEntity;
-    }
+
     //delete track
     @ApiOperation(value = "Delete Track", response = Iterable.class)
     @DeleteMapping("/track/{id}")

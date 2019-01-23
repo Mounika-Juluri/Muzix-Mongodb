@@ -70,12 +70,5 @@ public class TrackServiceImpl implements TrackService {
         return trackRepository.findAll();
     }
 
-    //method to find a track by its name using @query
-    @Override
-    public List<Track> findByName(String name) throws TrackNotFoundException {
-        if (trackRepository.findTrackByName(name).isEmpty()) {
-            throw new TrackNotFoundException("Track not found");
-        }
-        return trackRepository.findTrackByName(name);
-    }
+
 }
