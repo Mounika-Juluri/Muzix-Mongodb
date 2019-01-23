@@ -24,6 +24,11 @@ public class TrackController {
         ResponseEntity responseEntity=new ResponseEntity<String>(e.getMessage(),HttpStatus.NOT_MODIFIED);
         return responseEntity;
     }
+    @ExceptionHandler(value=TrackNotFoundException.class)
+    public ResponseEntity <?> trackNotFoundException(final TrackNotFoundException e) {
+        ResponseEntity responseEntity=new ResponseEntity<String>(e.getMessage(),HttpStatus.NOT_MODIFIED);
+        return responseEntity;
+    }
 
    @Autowired
     public TrackController(TrackService trackService) {
@@ -41,7 +46,7 @@ public class TrackController {
     //getting all the tracks
     @ApiOperation(value = "Get All Tracks", response = Iterable.class)
     @GetMapping("/tracks")
-       public ResponseEntity<?> getAllTracks(){
+       public ResponseEntity<?> getAllTracks() throws TrackNotFoundException{
         return new ResponseEntity<List<Track>>(trackService.getAllTracks(),HttpStatus.OK);
     }
     //view track by id
@@ -59,7 +64,7 @@ public class TrackController {
     //view track by name
     @ApiOperation(value = "View Track By Name", response = Iterable.class)
     @GetMapping("/tracks/{name}")
-    public ResponseEntity<List<Track>> findTrackByName(@PathVariable String name) {
+    public ResponseEntity<List<Track>> findTrackByName(@PathVariable String name) throws TrackNotFoundException{
         ResponseEntity responseEntity;
             responseEntity=new ResponseEntity<List<Track>>(trackService.findByName(name),HttpStatus.OK);
         return responseEntity;
@@ -67,7 +72,7 @@ public class TrackController {
     //delete track
     @ApiOperation(value = "Delete Track", response = Iterable.class)
     @DeleteMapping("/track/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable int id){
+    public ResponseEntity<?> deleteById(@PathVariable int id) throws TrackNotFoundException{
         ResponseEntity responseEntity;
         trackService.deleteTrack(id);
         responseEntity=new ResponseEntity<String>("Successfully deleted", HttpStatus.NO_CONTENT);
@@ -75,10 +80,10 @@ public class TrackController {
     }
     //update track
     @ApiOperation(value = "Update Track", response = Iterable.class)
-    @PutMapping("/track")
-    public ResponseEntity<?> Updatetrack(@RequestBody Track track){
+    @PutMapping("/track/{id}/{comments}")
+    public ResponseEntity<?> Updatetrack(@PathVariable int id,@PathVariable String comments) throws TrackNotFoundException{
         ResponseEntity responseEntity;
-        trackService.updateCommentsOfTrack(track);
+        trackService.updateCommentsOfTrack(id,comments);
         responseEntity=new ResponseEntity<String>("Successfully updated", HttpStatus.OK);
         return responseEntity;
     }

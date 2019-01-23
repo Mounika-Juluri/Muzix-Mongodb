@@ -16,7 +16,6 @@ public class TrackServiceImpl implements TrackService {
     //constructor for service class takes trackrepository as argument
     @Autowired
     public TrackServiceImpl(TrackRepository trackRepository) {
-
         this.trackRepository = trackRepository;
     }
 
@@ -24,7 +23,6 @@ public class TrackServiceImpl implements TrackService {
     @Override
     public Track saveTrack(Track track) throws TrackAlreadyExistsException{
         if(trackRepository.existsById(track.getTrackId())){
-
             throw new TrackAlreadyExistsException("User already exists");
         }
         Track savedTrack=trackRepository.save(track);
@@ -43,26 +41,41 @@ public class TrackServiceImpl implements TrackService {
 
     //method to update a track
     @Override
-    public Track updateCommentsOfTrack(Track track) {
-        Track savedTrack=trackRepository.save(track);
+    public Track updateCommentsOfTrack(int id,String comments) throws TrackNotFoundException {
+        Optional<Track> track=trackRepository.findById(id);
+        if(!trackRepository.existsById(id)){
+            throw new TrackNotFoundException("Track doesnot exist");
+        }
+        Track track1=track.get();
+        track1.setTrackComments(comments);
+        Track savedTrack=trackRepository.save(track1);
         return savedTrack;
     }
 
     //method to delete the track getting trackId
     @Override
-    public void deleteTrack(int id) {
+    public void deleteTrack(int id) throws TrackNotFoundException {
+        if(!trackRepository.existsById(id)){
+            throw new TrackNotFoundException("Track doesnot exist");
+        }
         trackRepository.deleteById(id);
     }
 
     //method to get all the tracks
     @Override
-    public List<Track> getAllTracks() {
+    public List<Track> getAllTracks()throws TrackNotFoundException {
+        if(trackRepository.findAll().isEmpty()) {
+            throw new TrackNotFoundException("No Track Found");
+        }
         return trackRepository.findAll();
     }
 
     //method to find a track by its name using @query
     @Override
-    public List<Track> findByName(String name)  {
+    public List<Track> findByName(String name) throws TrackNotFoundException {
+        if (trackRepository.findTrackByName(name).isEmpty()) {
+            throw new TrackNotFoundException("Track not found");
+        }
         return trackRepository.findTrackByName(name);
     }
 }
