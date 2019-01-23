@@ -7,6 +7,7 @@ import com.stackroute.service.TrackService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@ControllerAdvice
 @RequestMapping(value="/track")
 public class TrackController {
     TrackService trackService;
+
+    @ExceptionHandler(value=TrackAlreadyExistsException.class)
+    public ResponseEntity <?> tracknotFoundException(final TrackAlreadyExistsException e) {
+        ResponseEntity responseEntity=new ResponseEntity<String>(e.getMessage(),HttpStatus.CONFLICT);
+        return responseEntity;
+    }
+
 
     public TrackController(TrackService trackService) {
         this.trackService = trackService;
@@ -25,14 +34,10 @@ public class TrackController {
     @ApiOperation(value = "Add Track", response = Iterable.class)
 
     @PostMapping("/add")
-        public ResponseEntity<?> saveTrack(@RequestBody Track track){
+        public ResponseEntity<?> saveTrack(@RequestBody Track track)throws TrackAlreadyExistsException{
         ResponseEntity responseEntity;
-        try{
             trackService.saveTrack(track);
             responseEntity=new ResponseEntity<String>("Successfully created", HttpStatus.CREATED);
-        }catch(TrackAlreadyExistsException ex){
-            responseEntity=new ResponseEntity<String>(ex.getMessage(),HttpStatus.CONFLICT);
-        }
         return responseEntity;
     }
     @ApiOperation(value = "Get All Tracks", response = Iterable.class)
@@ -44,7 +49,7 @@ public class TrackController {
     @ApiOperation(value = "View Track By ID", response = Iterable.class)
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<Optional<Track>> displayById(@PathVariable int id){
+    public ResponseEntity<Optional<Track>> displayById(@PathVariable int id) throws TrackNotFoundException{
         ResponseEntity responseEntity;
         try{
             responseEntity=new ResponseEntity<Optional<Track>>(trackService.displayTrackByTrackId(id),HttpStatus.OK);
@@ -56,13 +61,11 @@ public class TrackController {
     @ApiOperation(value = "View Track By Name", response = Iterable.class)
 
     @GetMapping("/shows/{name}")
-    public ResponseEntity<List<Track>> findTrackByName(@PathVariable String name){
+    public ResponseEntity<List<Track>> findTrackByName(@PathVariable String name) {
         ResponseEntity responseEntity;
-        try{
+
             responseEntity=new ResponseEntity<List<Track>>(trackService.findByName(name),HttpStatus.OK);
-        }catch(TrackNotFoundException ex){
-            responseEntity=new ResponseEntity<String>(ex.getMessage(),HttpStatus.CONFLICT);
-        }
+
         return responseEntity;
     }
     @ApiOperation(value = "Delete Track", response = Iterable.class)

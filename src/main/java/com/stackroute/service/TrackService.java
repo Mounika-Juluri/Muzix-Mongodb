@@ -10,10 +10,14 @@ import java.util.Optional;
 public interface TrackService {
 
      Track saveTrack(Track track) throws TrackAlreadyExistsException;
+
      Optional<Track> displayTrackByTrackId(int id) throws TrackNotFoundException;
+
      Track updateCommentsOfTrack(Track track);
+
      void deleteTrack(int id) ;
      List<Track> getAllTracks();
-     List<Track> findByName(String name) throws TrackNotFoundException;
+
+     List<Track> findByName(String name);
 
 }
